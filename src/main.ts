@@ -7,10 +7,7 @@ import { ValidationPipe } from '@nestjs/common';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create<NestFastifyApplication>(
-    AppModule,
-    new FastifyAdapter({ bodyLimit: 10048576 }),
-  );
+  const app = await NestFactory.create<NestFastifyApplication>(AppModule);
 
   app.useGlobalPipes(new ValidationPipe());
   app.enableCors();
