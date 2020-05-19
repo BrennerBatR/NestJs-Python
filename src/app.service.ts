@@ -7,18 +7,20 @@ export class AppService {
     try {
       var dataToSend;
       const path = require('path');
-      const dirPath = path.join(__dirname, '../src/sum.py');
+      const dirPath = path.join(__dirname, '../src/python/sum.py');
       const python = spawn('python', [dirPath, query.value1, query.value2]);
 
-      dataToSend = await python.stdout.on('data', async data => {
-        console.log('Pipe data from python script ...');
+      var sum = new Promise(function(resolve, reject) {
+        dataToSend = python.stdout.on('data', async data => {
+          console.log('Pipe data from python script ...');
 
-        return await data.toString();
+          resolve(data.toString());
+        });
       });
-      python.stderr.on('data', data => {
-        console.error(`child stderr:\n${data}`);
+      return sum.then(function(value) {
+        console.log(value); // 1
+        return value;
       });
-      return  dataToSend;
     } catch (e) {
       console.log(e);
       throw new HttpException('Error', 500);
